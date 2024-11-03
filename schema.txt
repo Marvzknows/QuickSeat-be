@@ -13,3 +13,6 @@ Login
 - username
 - password (unhashed then check)
 - generate JWT upon login and refresh token
+
+Admin Dashboard
+- 
