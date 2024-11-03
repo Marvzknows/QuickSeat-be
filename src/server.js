@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import signupRouter from "./routes/Signup/signupRoute.js"; 
+import loginRouter from "./routes/Login/loginRoute.js";
 
 const app = express();
 dotenv.config();
@@ -12,9 +13,9 @@ const port = process.env.PORT;
 
 app.use(express.json());
 
-// #region Routes
-app.use('/api', signupRouter)
-// #endregion
+// Signup & Login Routes
+app.use('/api', signupRouter);
+app.use('/api', loginRouter);
 
 app.listen(port, () => {
     console.log("Listening to port: ", port);

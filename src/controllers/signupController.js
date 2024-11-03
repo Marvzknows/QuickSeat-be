@@ -6,6 +6,15 @@ import bcrypt from 'bcrypt';
 export const SignupController = async (req, res) => {
     const { first_name, last_name, username, password } = req.body
     try {
+        // Check if the username is already taken
+        const checkQuery = `SELECT username FROM user_accounts WHERE username = ?`;
+        const [existingUser] = await db.query(checkQuery, [username]);
+
+        if (existingUser.length > 0) {
+            return res.status(409).json({ message: "Username is already taken" });
+        }
+        
+        // Registration logic
         const hashedPassword = await bcrypt.hash(password, 10);
         const userId = uuidv4();
         const dateCreated = new Date().toISOString().slice(0, 10);
