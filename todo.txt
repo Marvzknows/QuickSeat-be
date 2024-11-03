@@ -1,0 +1,15 @@
+CINEMA
+
+User Registration:
+- id: auto increment
+- user_id: uuid
+- first_name: string
+- last_name: string
+- username: string (atleast minimum of 8 characaters)
+- password: string (hashed)
+- date_created: Date.now()
+
+Login
+- username
+- password (unhashed then check)
+- generate JWT upon login and refresh token
