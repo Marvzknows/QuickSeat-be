@@ -1,0 +1,24 @@
+**** USER SIDE ****
+
+User Home Page / Dashboard:
+
+NAVBARS LINKS:
+    - Now Showing ( Landing Page Upon User logging in )
+    - Buy Ticket
+    - Categories ( Coming Soon Feature, Dropdown )
+    - Profile Logo ( Dropwond )
+        -> My Profile
+        -> My Tickets
+        -> Logout
+
+======= NOW SHOWING PAGE ========
+
+    - Now Showing Movies ( CARDS component, Content.... )
+        -> Movie Thumbnail
+        -> MTRCB Rating (eg, G, PG, R-13, R-16, R-18, X )
+        -> Genre
+        -> Duration (eg, 145 mins)
+        -> Time ( eg, 4:00 pm - 5:00 pm)
+        -> Buy ticket Button ( OnClick redirect to buy ticket page, Where the user can book its ticker and pick a seat )
+
+    - Below the Cards section are the Upcomming Shows Slider/Carousel

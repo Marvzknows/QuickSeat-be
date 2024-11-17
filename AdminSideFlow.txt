@@ -1,0 +1,24 @@
+**** ADMIN SIDE ****
+
+Admin Dashboard:
+
+SIDE BARS MENUS:
+    - Dashboard ( Graph/Chart of total sales of the Now Showing Films )
+    - Movies ( Submenu Dropdown )
+        -> Now Showing ( CRUD )
+        -> Upcomming Showing ( CRUD )
+        -> Manage Seats ( CRUD )
+    - Sports ( Coming Soon feature )
+    - Concert ( Coming Soon feature )
+
+    - Navbar
+        -> Account Settings
+        -> Logout
+
+======= DASHBOARD PAGE ========
+
+    **NOTE: List and Chart are Displayed Flex on Desktop View**
+    - Dashboard Header ( "Welcome Admin", Date and Time )
+    - 1st Chart (BAR CHART) : total sales of the Now Showing Films 
+    - List of Now Showing Films
+    - Latest Comments ( Table: Username, Movie Name, DateCommented, Comment)
