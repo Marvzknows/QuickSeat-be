@@ -1,0 +1,8 @@
+TODO:
+
+-- Upcoming Shows --
+- **DONE** Create Upcoming Show
+- View Upcoming Show
+- Delete Upcoming Show
+- Update Upcoming Show
+- View Specific Upcoming show (by ID)
