@@ -14,5 +14,49 @@ Login
 - password (unhashed then check)
 - generate JWT upon login and refresh token
 
-Admin Dashboard
-- 
+======= ADMIN DASHBOARD PAGE ========
+
+******** UPCOMING SHOW (CRUD) ********
+(POST) Payload = {
+    image: string;
+    mtrcb_rating: string;
+    genre: string;
+    duration: string;
+}
+
+- movie_id: string (required, auto increment, PRIMARY KEY)
+- image: string (required)
+- mtrcb_rating: string (required)
+- genre: string (required)
+- duration: string (required)
+
+
+******** NOW SHOWING (CRUD) ********
+
+// Add Now Showing
+Note: "movie_id" from Upcoming Show list
+(POST) Payload = { movie_id: string, ... }
+
+- movie_id: string (required)
+
+// Edit Now Showing
+
+(PUT / PATCH) Payload = {
+    movie_id: string
+    image: string
+    mtrcb_rating: string
+    genre: string
+    duration: string
+    time_showing: string
+}
+
+- movie_id: string (required)
+- image: string (required)
+- mtrcb_rating: string (required)
+- genre: string (required)
+- duration: string (required)
+- time_showing: string (required)
+
+// Delete Now Showing
+(DELETE) Payload = { movie_id: string }
+- movie_id: string (params, required)
