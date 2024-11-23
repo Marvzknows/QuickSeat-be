@@ -1,5 +1,6 @@
 import imageUploadtoCloud from "../../utils/upcomingImageUpload.js";
 import MoviesModel from "../../models/movies/moviesModel.js";
+import { json } from "express";
 
 export const addUpcomingMoviesController = async (req, res) => {
   const { file, body } = req;
@@ -81,7 +82,7 @@ export const viewUpcomingMovieController = async (req, res) => {
 
     const [data] = await MoviesModel.viewUpcomingMovieById(movie_id);
 
-    if (data) {
+    if (data.length) {
       return res.status(200).json({
         status: true,
         data: data,
@@ -90,11 +91,41 @@ export const viewUpcomingMovieController = async (req, res) => {
     res.status(200).json({
       status: false,
       message: "No data Found",
-      data: data,
+      data: null,
     });
   } catch (error) {
     return res.status(401).json({
       message: `Error: ${error}`,
     });
   }
+};
+
+export const deleteUpcomingMovieController = async (req, res) => {
+  const movie_id = req.params.id;
+
+  if (!movie_id) return res.status(400).json({ message: "Invalid Movie ID." });
+  
+  try {
+    
+    // QUERY RESPONSE
+    const [data] = await MoviesModel.deleteUpcomingMovie(movie_id);
+
+    if (data.affectedRows > 0) {
+      res.status(201).json({
+        statu: true,
+        message: "Deleted Successfuly",
+      });
+    } else {
+      res.status(201).json({
+        statu: false,
+        message: "Movie not found",
+      });
+    }
+
+  } catch (error) {
+    return res.status(401).json({
+      message: `Deleting Upcoming Movie failed: ${error}`,
+    });
+  }
+
 };

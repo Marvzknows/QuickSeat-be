@@ -2,7 +2,8 @@ TODO:
 
 -- Upcoming Shows --
 - **DONE** Create Upcoming Show
-- View Upcoming Show
-- Delete Upcoming Show
+- **DONE** View Upcoming Show
+- **DONE** Delete Upcoming Show
 - Update Upcoming Show
-- View Specific Upcoming show (by ID)
+- **DONE** View Specific Upcoming show (by ID)
+- Delete image in cloudinary if data is also deleted in database
