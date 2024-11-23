@@ -25,10 +25,11 @@ class MoviesModel {
     }
   };
 
-  static viewAllUpcomingMovies = async () => {
-    const query = `SELECT * FROM upcoming_show`;
+  static viewAllUpcomingMovies = async (page, limit) => {
+    const offset = (page - 1) * limit;
+    const query = `SELECT * FROM upcoming_show LIMIT ? OFFSET ?`;
     try {
-      const response = await db.query(query);
+      const response = await db.query(query, [limit, offset]);
       return response;
     } catch (error) {
       throw new Error(
@@ -55,6 +56,25 @@ class MoviesModel {
     try {
       const query = `DELETE FROM upcoming_show WHERE id = ?`;
       const response = await db.query(query, [movie_id]);
+      return response;
+    } catch (error) {
+      throw new Error(`Query failed, ${error}`)
+    }
+  }
+
+  static updateUpcomingMovie = async (payload) => {
+    const { id, movie_name, image, mtrcb_rating, genre, duration } = payload;
+    try {
+      const query = `UPDATE upcoming_show SET movie_name = ?, image = ?, mtrcb_rating = ?, genre = ?, duration = ? 
+          WHERE id = ? `;
+      const response = await db.query(query, [
+        movie_name,
+        image,
+        mtrcb_rating,
+        genre,
+        duration,
+        id
+      ]);
       return response;
     } catch (error) {
       throw new Error(`Query failed, ${error}`)

@@ -1,16 +1,16 @@
 import imageUploadtoCloud from "../../utils/upcomingImageUpload.js";
 import MoviesModel from "../../models/movies/moviesModel.js";
-import { json } from "express";
 
 export const addUpcomingMoviesController = async (req, res) => {
   const { file, body } = req;
 
   if (!file) return res.status(400).json({ message: "No file uploaded." });
   // Check if the file is too large (1MB limit)
-  if (file.size > 1 * 1024 * 1024)
+  if (file.size > 1 * 1024 * 1024) {
     return res
       .status(400)
       .json({ message: "Image is too large. Maximum size is 1MB." });
+  }
 
   try {
     const uploadedImageUrl = await imageUploadtoCloud(file, "upcoming_show");
@@ -47,9 +47,15 @@ export const addUpcomingMoviesController = async (req, res) => {
   }
 };
 
-export const viewAllUpcomingMoviesController = async (_req, res) => {
+export const viewAllUpcomingMoviesController = async (req, res) => {
+
+  const { page = 1, limit = 10 } = req.query;
+  // Convert page and limit to integers for use in the model function
+  const pageNumber = parseInt(page, 10);
+  const limitNumber = parseInt(limit, 10);
+
   try {
-    const [data] = await MoviesModel.viewAllUpcomingMovies();
+    const [data] = await MoviesModel.viewAllUpcomingMovies(pageNumber, limitNumber);
 
     if (data) {
       return res.status(200).json({
@@ -129,3 +135,50 @@ export const deleteUpcomingMovieController = async (req, res) => {
   }
 
 };
+
+export const updateUpcomingMovieController = async (req, res) => {
+  const { file, body } = req;
+  const { id, movie_name, mtrcb_rating, genre, duration } = body;
+
+  if (!file) return res.status(400).json({ message: "No Image uploaded." });
+
+  if (!id || !movie_name || !mtrcb_rating || !genre || !duration) {
+    return res.status(400).json({ message: "Update Failed, Missing required fields in payload." });
+  } 
+
+  try {
+    // Check if the file is too large (1MB limit)
+    if (file.size > 1 * 1024 * 1024) {
+      return res
+        .status(400)
+        .json({ message: "Image is too large. Maximum size is 1MB." });
+    }
+
+    const uploadedImageUrl = await imageUploadtoCloud(file, "upcoming_show");
+
+    const response = await MoviesModel.updateUpcomingMovie({
+      ...body,
+      image: uploadedImageUrl,
+    });
+
+    // Check if the movie was updated successfully
+    if (response[0]?.affectedRows > 0) {
+      return res.status(200).json({
+        status: true,
+        message: "Upcoming movie successfully update",
+        image: uploadedImageUrl,
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        message: "Updating upcoming movie failed",
+      });
+    }
+
+  } catch (error) {
+    return res.status(401).json({
+      error: `Updating upcoming movie failed, ${error}`,
+    });
+  }
+
+}
