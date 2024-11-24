@@ -5,8 +5,8 @@ Admin Dashboard:
 SIDE BARS MENUS:
     - Dashboard ( Graph/Chart of total sales of the Now Showing Films )
     - Movies ( Submenu Dropdown )
-        -> Now Showing ( CRUD )
         -> Upcomming Showing ( CRUD )
+        -> Now Showing ( CRUD )
         -> Manage Seats ( CRUD )
     - Sports ( Coming Soon feature )
     - Concert ( Coming Soon feature )

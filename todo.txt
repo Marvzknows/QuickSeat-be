@@ -1,9 +1,22 @@
 TODO:
 
--- Upcoming Shows --
-- **DONE** Create Upcoming Show
-- **DONE** View Upcoming Show
-- **DONE** Delete Upcoming Show
-- **DONE** Update Upcoming Show
-- **DONE** View Specific Upcoming show (by ID)
-- Delete image in cloudinary if data is also deleted in database
+-- Upcoming Shows -- ( CRUD )
+
+-> **DONE** Create Upcoming Show
+-> **DONE** View Upcoming Show
+-> **DONE** Delete Upcoming Show ( Movie should also be deleted in the "now_showing" TABLE )
+-> **DONE** Update Upcoming Show
+-> **DONE** View Specific Upcoming show (by ID)
+-> Delete image in cloudinary if data is also deleted in database
+
+========================================================================
+
+-- Now Showing -- ( CRUD )
+
+-> **DONE** Create a relationship of movies between "now_showing" and "upcoming_show" DATABASE Table
+-> **DONE** Add now showing 
+        -> the inserted movie_id should be the same id from the "upcoming_show", same sa payload/other data
+-> Delete Now Showing
+-> Update Now Showing
+-> View Now Showing
+-> View Specific Now Showing ( by id )
