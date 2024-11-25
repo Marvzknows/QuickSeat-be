@@ -21,7 +21,7 @@ export const addNowShowingController = async(req, res) => {
           .json({ message: "Failed to upload image to cloud storage" });
       }
 
-      const response = await NowShowingMoviesModel.addUpcomingMovies({
+      const response = await NowShowingMoviesModel.addNowShowingMovies({
         ...body,
         image: uploadedImageUrl,
       });
@@ -45,4 +45,101 @@ export const addNowShowingController = async(req, res) => {
         error: `Adding now showing movie failed, ${error}`,
       });
     }
+}
+
+export const deleteNowShowingController = async (req, res) => {
+  const movie_id = req.params.id;
+
+
+  if(!movie_id) {
+    return res.status(400).json ({
+      status: false,
+      message: "Delete Failed, Invalid Movie ID"
+    })
+  }
+
+  try {
+
+    const [response] = await NowShowingMoviesModel.deleteNowShowingMovie(
+      movie_id
+    );
+
+    if (response.affectedRows > 0) {
+      res.status(201).json({
+        statu: true,
+        message: "Deleted Successfuly",
+      });
+    } else {
+      res.status(201).json({
+        statu: false,
+        message: "Movie not found",
+      });
+    }
+
+  } catch (error) {
+    return res.status(401).json({
+      message: `Deleting now showing movie failed, ${error}`,
+    });
+  }
+}
+
+export const getNowShowingController = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+  // Convert page and limit to integers for use in the model function
+  const pageNumber = parseInt(page, 10);
+  const limitNumber = parseInt(limit, 10);
+
+  try {
+    const [data] = await NowShowingMoviesModel.getAllNowShowingMovies(pageNumber, limitNumber);
+    if (data) {
+      return res.status(200).json({
+        status: true,
+        data: data,
+      });
+    }
+    res.status(200).json({
+      status: false,
+      message: "No data Found",
+      data: data,
+    });
+    
+  } catch (error) {
+    return res.status(401).json({
+      error: `Error fetching Now showing Movies, ${error}`,
+    });
+  }
+}
+
+export const getNowShowingByIdController = async (req, res) => {
+  const { id } = req.params;
+
+  if(!id) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid Movie Id",
+    })
+  }
+
+  const [data] = await NowShowingMoviesModel.getNowShowingMovie(id);
+  if (data.length) {
+    return res.status(200).json({
+      status: true,
+      data: data,
+    });
+  }
+
+  res.status(200).json({
+    status: false,
+    message: "No data Found",
+    data: null,
+  });
+  
+  try {
+    
+  } catch (error) {
+    return res.status(401).json({
+      message: `Error: ${error}`,
+    });
+  }
+
 }

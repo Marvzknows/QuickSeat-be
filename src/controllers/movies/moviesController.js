@@ -113,7 +113,6 @@ export const deleteUpcomingMovieController = async (req, res) => {
   
   try {
     
-    // QUERY RESPONSE
     const [data] = await MoviesModel.deleteUpcomingMovie(movie_id);
 
     if (data.affectedRows > 0) {

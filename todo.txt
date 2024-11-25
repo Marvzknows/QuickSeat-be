@@ -16,7 +16,7 @@ TODO:
 -> **DONE** Create a relationship of movies between "now_showing" and "upcoming_show" DATABASE Table
 -> **DONE** Add now showing 
         -> the inserted movie_id should be the same id from the "upcoming_show", same sa payload/other data
--> Delete Now Showing
+-> **DONE** Delete Now Showing
 -> Update Now Showing
--> View Now Showing
--> View Specific Now Showing ( by id )
+-> **DONE** View Now Showing
+-> **DONE** View Specific Now Showing ( by id )
