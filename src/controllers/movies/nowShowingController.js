@@ -133,12 +133,59 @@ export const getNowShowingByIdController = async (req, res) => {
     message: "No data Found",
     data: null,
   });
-  
+
   try {
     
   } catch (error) {
     return res.status(401).json({
       message: `Error: ${error}`,
+    });
+  }
+
+}
+
+export const updateNowShowingController = async (req, res) => {
+  const { file, body } = req;
+  const { id, movie_name, mtrcb_rating, genre, duration } = body;
+
+  if (!file) return res.status(400).json({ message: "No Image uploaded." });
+
+  if (!id || !movie_name || !mtrcb_rating || !genre || !duration) {
+    return res.status(400).json({ message: "Update Failed, Missing required fields in payload." });
+  } 
+
+  try {
+    // Check if the file is too large (1MB limit)
+    if (file.size > 1 * 1024 * 1024) {
+      return res
+        .status(400)
+        .json({ message: "Image is too large. Maximum size is 1MB." });
+    }
+
+    const uploadedImageUrl = await imageUploadtoCloud(file, "now_showing");
+
+    const response = await NowShowingMoviesModel.updateNowShowingController({
+      ...body,
+      image: uploadedImageUrl,
+    });
+
+    // Check if the movie was updated successfully
+    if (response[0]?.affectedRows > 0) {
+      return res.status(200).json({
+        status: true,
+        message: "Now showing movie successfully update",
+        image: uploadedImageUrl,
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        message: "Updating Now showing movie failed",
+      });
+    }
+
+  } catch (error) {
+    return res.status(401).json({
+      error: `Updating Now showing movie failed, ${error}`,
     });
   }
 

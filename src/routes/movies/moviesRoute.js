@@ -8,7 +8,13 @@ import {
 } from "../../controllers/movies/moviesController.js";
 import RequireAuthentication from '../../middlewares/RequireAuthentication.js';
 import upload from '../../middlewares/multer.js';
-import { addNowShowingController, deleteNowShowingController, getNowShowingController, getNowShowingByIdController } from '../../controllers/movies/nowShowingController.js';
+import {
+  addNowShowingController,
+  deleteNowShowingController,
+  getNowShowingController,
+  getNowShowingByIdController,
+  updateNowShowingController
+} from "../../controllers/movies/nowShowingController.js";
 
 
 const moviesRouter = express.Router();
@@ -25,5 +31,6 @@ moviesRouter.post('/nowshowing/addmovie', RequireAuthentication, upload.single('
 moviesRouter.delete('/nowshowing/deletemovie/:id', RequireAuthentication, deleteNowShowingController);
 moviesRouter.get('/nowshowing/getmovies', RequireAuthentication, getNowShowingController);
 moviesRouter.get('/nowshowing/getmovies/:id', RequireAuthentication, getNowShowingByIdController);
+moviesRouter.put('/nowshowing/updatenowshowing', RequireAuthentication, upload.single('image'), updateNowShowingController);
 
 export default moviesRouter;

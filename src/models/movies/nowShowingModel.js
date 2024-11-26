@@ -65,6 +65,28 @@ class NowShowingMoviesModel {
     }
   }
 
+  static updateNowShowingMovie = async (payload) => {
+    const { id, movie_name, image, mtrcb_rating, genre, duration } = payload;
+    try {
+      
+      const query = `UPDATE now_showing SET movie_name = ?, image = ?, mtrcb_rating = ?, genre = ?, duration = ? 
+        WHERE id = ? `;
+      const response = await db.query(query, [
+        movie_name,
+        image, 
+        mtrcb_rating, 
+        genre, 
+        duration,
+        id
+      ]);
+
+      return response;
+
+    } catch (error) {
+      throw new Error(`Update failed, ${error}`)
+    }
+  }
+
 }
 
 export default NowShowingMoviesModel;
