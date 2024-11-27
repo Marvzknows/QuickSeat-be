@@ -17,6 +17,6 @@ TODO:
 -> **DONE** Add now showing 
         -> the inserted movie_id should be the same id from the "upcoming_show", same sa payload/other data
 -> **DONE** Delete Now Showing
--> Update Now Showing
+-> **DONE* Update Now Showing
 -> **DONE** View Now Showing
 -> **DONE** View Specific Now Showing ( by id )

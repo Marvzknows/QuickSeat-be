@@ -163,8 +163,8 @@ export const updateNowShowingController = async (req, res) => {
     }
 
     const uploadedImageUrl = await imageUploadtoCloud(file, "now_showing");
-
-    const response = await NowShowingMoviesModel.updateNowShowingController({
+    console.log("Payload: ", body)
+    const response = await NowShowingMoviesModel.updateNowShowingMovie({
       ...body,
       image: uploadedImageUrl,
     });
