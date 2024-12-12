@@ -14,7 +14,11 @@ app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT;
 
 app.use(express.json());
-app.use(cors()); // Allow requests from frontend
+app.use(cors({ // Allow requests from frontend
+    origin: process.env.DOMAIN_ORIGIN, // Replace with your front-end URL or *
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true // Allow credentials to be included
+}));
 
 // Signup & Login Routes
 app.use('/api', signupRouter);
@@ -24,5 +28,5 @@ app.use('/api', loginRouter);
 app.use('/api', moviesRouter);
 
 app.listen(port, () => {
-    console.log("Listening to port: ", port);
-})
+    console.log(`Server is running on http://localhost:${port}`);
+});

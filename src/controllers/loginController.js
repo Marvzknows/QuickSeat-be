@@ -18,14 +18,14 @@ export const LoginController = async(req, res) => {
             const token = jwt.sign({ username: username, password: userData[0].password }, process.env.SECRET_KEY, {
                 expiresIn: "1hr",
             });
-            res.status(500).json({
+            res.status(201).json({
                 status: true,
                 message: "Login Successfully",
                 acces_token: token,
                 user_information: userData[0]
               });
         } else {
-            res.status(500).json({ status: false, message: "User not found" });
+            res.status(404).json({ status: false, message: "User not found" });
         }
 
         
