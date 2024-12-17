@@ -15,7 +15,7 @@ import {
   getNowShowingByIdController,
   updateNowShowingController
 } from "../../controllers/movies/nowShowingController.js";
-
+import { getMoviesGenre } from '../../controllers/movies/moviesGenre.js'
 
 const moviesRouter = express.Router();
 
@@ -33,4 +33,6 @@ moviesRouter.get('/nowshowing/getmovies', RequireAuthentication, getNowShowingCo
 moviesRouter.get('/nowshowing/getmovies/:id', RequireAuthentication, getNowShowingByIdController);
 moviesRouter.put('/nowshowing/updatenowshowing', RequireAuthentication, upload.single('image'), updateNowShowingController);
 
+// Movie Genres List
+moviesRouter.get('/genres', RequireAuthentication, getMoviesGenre);
 export default moviesRouter;
