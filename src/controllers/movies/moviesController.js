@@ -48,32 +48,41 @@ export const addUpcomingMoviesController = async (req, res) => {
 };
 
 export const viewAllUpcomingMoviesController = async (req, res) => {
-
   const { page = 1, limit = 10 } = req.query;
-  // Convert page and limit to integers for use in the model function
+
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
 
   try {
+    // Fetch paginated data
     const [data] = await MoviesModel.viewAllUpcomingMovies(pageNumber, limitNumber);
+    // Fetch total count
+    const [totalCountResult] = await MoviesModel.getCount('upcoming_show');
 
-    if (data) {
+    const count = totalCountResult[0]?.count || 0;
+    const totalPages = Math.ceil(count / limitNumber);
+
+    if (data.length > 0) {
       return res.status(200).json({
         status: true,
-        data: data,
+        currentPage: pageNumber,
+        totalPages,
+        count,
+        data,
       });
     }
-    res.status(200).json({
+    return res.status(404).json({
       status: false,
-      message: "No data Found",
-      data: data,
+      message: "No data found.",
     });
   } catch (error) {
-    return res.status(401).json({
-      message: `Error: ${error}`,
+    return res.status(500).json({
+      message: `Error: ${error.message}`,
     });
   }
 };
+
+
 
 export const viewUpcomingMovieController = async (req, res) => {
   try {

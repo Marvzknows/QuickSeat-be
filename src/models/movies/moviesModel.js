@@ -81,6 +81,21 @@ class MoviesModel {
     }
   }
 
+  static getCount = async (tableName) => {
+      try {
+        // Validate table name to prevent SQL injection
+        if (!tableName) {
+          throw new Error("Invalid table name");
+        }
+
+        const query = `SELECT COUNT(*) AS count FROM ${tableName}`;
+        const response = await db.query(query);
+        return response;
+      } catch (error) {
+        throw new Error(`Count Query failed, ${error}`)
+      }
+  }
+
 }
 
 export default MoviesModel;
