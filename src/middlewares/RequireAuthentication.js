@@ -11,7 +11,7 @@ const RequireAuthentication = (req, res, next) => {
     next();
   } catch (error) {
     return res.status(401).json({
-      isToken: false,
+      isToken: true,
       error: "Invalid or Expired Token",
     });
   }

@@ -2,7 +2,6 @@ import db from '../../database/db.js';
 import { v4 as uuidv4 } from 'uuid';
 
 class MoviesModel {
-
   static addUpcomingMovies = async (payload) => {
     const { movie_name, image, mtrcb_rating, genre, duration } = payload;
     const movie_id = uuidv4();
@@ -25,11 +24,22 @@ class MoviesModel {
     }
   };
 
-  static viewAllUpcomingMovies = async (page, limit) => {
+  static viewAllUpcomingMovies = async (page, limit, search) => {
     const offset = (page - 1) * limit;
-    const query = `SELECT * FROM upcoming_show LIMIT ? OFFSET ?`;
+    let query = `SELECT * FROM upcoming_show`;
+    const queryParams = [];
+
+    // Add search condition if provided
+    if (search) {
+      query += ` WHERE movie_name LIKE ?`;
+      queryParams.push(`%${search}%`);
+    }
+
+    query += ` LIMIT ? OFFSET ?`;
+    queryParams.push(limit, offset);
+
     try {
-      const response = await db.query(query, [limit, offset]);
+      const response = await db.query(query, queryParams);
       return response;
     } catch (error) {
       throw new Error(
@@ -45,12 +55,9 @@ class MoviesModel {
       const response = await db.query(query, [movie_id]);
       return response;
     } catch (error) {
-      throw new Error(
-        "Failed to fetch upcoming movie." +
-          error.message
-      );
+      throw new Error("Failed to fetch upcoming movie." + error.message);
     }
-  }
+  };
 
   static deleteUpcomingMovie = async (movie_id) => {
     try {
@@ -58,9 +65,9 @@ class MoviesModel {
       const response = await db.query(query, [movie_id]);
       return response;
     } catch (error) {
-      throw new Error(`Query failed, ${error}`)
+      throw new Error(`Query failed, ${error}`);
     }
-  }
+  };
 
   static updateUpcomingMovie = async (payload) => {
     const { id, movie_name, image, mtrcb_rating, genre, duration } = payload;
@@ -73,29 +80,35 @@ class MoviesModel {
         mtrcb_rating,
         genre,
         duration,
-        id
+        id,
       ]);
       return response;
     } catch (error) {
-      throw new Error(`Query failed, ${error}`)
+      throw new Error(`Query failed, ${error}`);
     }
-  }
+  };
 
-  static getCount = async (tableName) => {
-      try {
-        // Validate table name to prevent SQL injection
-        if (!tableName) {
-          throw new Error("Invalid table name");
-        }
+  static getCount = async (tableName, search) => {
+    let query = `SELECT COUNT(*) AS count FROM ${tableName}`; 
+    const queryParams = [];
 
-        const query = `SELECT COUNT(*) AS count FROM ${tableName}`;
-        const response = await db.query(query);
-        return response;
-      } catch (error) {
-        throw new Error(`Count Query failed, ${error}`)
+    try {
+      // Validate table name to prevent SQL injection
+      if (!tableName) {
+        throw new Error("Invalid table name");
       }
-  }
 
+      if (search) {
+        query += ` WHERE movie_name LIKE ?`;
+        queryParams.push(`%${search}%`);
+      } 
+
+      const response = await db.query(query, queryParams);
+      return response;
+    } catch (error) {
+      throw new Error(`Count Query failed, ${error}`);
+    }
+  };
 }
 
 export default MoviesModel;

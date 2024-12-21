@@ -48,16 +48,16 @@ export const addUpcomingMoviesController = async (req, res) => {
 };
 
 export const viewAllUpcomingMoviesController = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, search = ''} = req.query;
 
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
 
   try {
     // Fetch paginated data
-    const [data] = await MoviesModel.viewAllUpcomingMovies(pageNumber, limitNumber);
+    const [data] = await MoviesModel.viewAllUpcomingMovies(pageNumber, limitNumber, search);
     // Fetch total count
-    const [totalCountResult] = await MoviesModel.getCount('upcoming_show');
+    const [totalCountResult] = await MoviesModel.getCount('upcoming_show', search);
 
     const count = totalCountResult[0]?.count || 0;
     const totalPages = Math.ceil(count / limitNumber);
@@ -71,9 +71,10 @@ export const viewAllUpcomingMoviesController = async (req, res) => {
         data,
       });
     }
-    return res.status(404).json({
+    return res.status(201).json({
       status: false,
       message: "No data found.",
+      data: []
     });
   } catch (error) {
     return res.status(500).json({
@@ -103,10 +104,10 @@ export const viewUpcomingMovieController = async (req, res) => {
         data: data,
       });
     }
-    res.status(200).json({
+    res.status(201).json({
       status: false,
       message: "No data Found",
-      data: null,
+      data: [],
     });
   } catch (error) {
     return res.status(401).json({
