@@ -127,12 +127,12 @@ export const deleteUpcomingMovieController = async (req, res) => {
 
     if (data.affectedRows > 0) {
       res.status(201).json({
-        statu: true,
+        status: true,
         message: "Deleted Successfuly",
       });
     } else {
       res.status(201).json({
-        statu: false,
+        status: false,
         message: "Movie not found",
       });
     }
