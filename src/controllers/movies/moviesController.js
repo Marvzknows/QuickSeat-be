@@ -149,32 +149,37 @@ export const updateUpcomingMovieController = async (req, res) => {
   const { file, body } = req;
   const { id, movie_name, mtrcb_rating, genre, duration } = body;
 
-  if (!file) return res.status(400).json({ message: "No Image uploaded." });
-
   if (!id || !movie_name || !mtrcb_rating || !genre || !duration) {
     return res.status(400).json({ message: "Update Failed, Missing required fields in payload." });
-  } 
+  }
 
   try {
-    // Check if the file is too large (1MB limit)
-    if (file.size > 1 * 1024 * 1024) {
-      return res
-        .status(400)
-        .json({ message: "Image is too large. Maximum size is 1MB." });
-    }
+    let uploadedImageUrl;
 
-    const uploadedImageUrl = await imageUploadtoCloud(file, "upcoming_show");
+    // If a file is uploaded, check size and upload to Cloudinary
+    if (file) {
+      if (file.size > 1 * 1024 * 1024) {
+        return res.status(400).json({ message: "Image is too large. Maximum size is 1MB." });
+      }
+      uploadedImageUrl = await imageUploadtoCloud(file, "upcoming_show");
+    } else {
+      // No new file, retain the existing image by querying the current record
+      const [existingMovie] = await MoviesModel.viewUpcomingMovieById(id);
+      if (!existingMovie) {
+        return res.status(404).json({ message: "Movie not found." });
+      }
+      uploadedImageUrl = existingMovie[0].image;  // Use existing image
+    }
 
     const response = await MoviesModel.updateUpcomingMovie({
       ...body,
       image: uploadedImageUrl,
     });
 
-    // Check if the movie was updated successfully
     if (response[0]?.affectedRows > 0) {
       return res.status(200).json({
         status: true,
-        message: "Upcoming movie successfully update",
+        message: "Upcoming movie successfully updated",
         image: uploadedImageUrl,
       });
     } else {
@@ -183,11 +188,9 @@ export const updateUpcomingMovieController = async (req, res) => {
         message: "Updating upcoming movie failed",
       });
     }
-
   } catch (error) {
-    return res.status(401).json({
-      error: `Updating upcoming movie failed, ${error}`,
+    return res.status(500).json({
+      error: `Updating upcoming movie failed, ${error.message}`,
     });
   }
-
-}
+};
