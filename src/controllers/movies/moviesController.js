@@ -194,3 +194,30 @@ export const updateUpcomingMovieController = async (req, res) => {
     });
   }
 };
+
+export const addMoviesToNowShowingController = async (req, res) => {
+  const { movieIds } = req.body;
+
+  if (!movieIds || !Array.isArray(movieIds) || movieIds.length === 0) {
+    return res.status(400).json({ message: "No movie provided." });
+  }
+
+  try {
+    const response = await MoviesModel.addMoviesToNowShowing(movieIds);
+    if (response.affectedRows > 0) {
+      return res.status(200).json({
+        status: true,
+        message: "Movies successfully moved to now showing",
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        message: "Failed to add movies to now showing",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: `Failed to move upcoming show to now showing: ${error.message}`,
+    });
+  }
+}

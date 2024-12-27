@@ -5,6 +5,7 @@ import {
   viewUpcomingMovieController,
   deleteUpcomingMovieController,
   updateUpcomingMovieController,
+  addMoviesToNowShowingController,
 } from "../../controllers/movies/moviesController.js";
 import RequireAuthentication from '../../middlewares/RequireAuthentication.js';
 import upload from '../../middlewares/multer.js';
@@ -25,6 +26,7 @@ moviesRouter.get('/getupcoming', RequireAuthentication, viewAllUpcomingMoviesCon
 moviesRouter.get('/getupcomingmoviebyid/:id', RequireAuthentication, viewUpcomingMovieController);
 moviesRouter.delete('/deleteupcoming/:id', RequireAuthentication, deleteUpcomingMovieController);
 moviesRouter.put('/updateupcoming', RequireAuthentication, upload.single('image'), updateUpcomingMovieController);
+moviesRouter.post('/movetonowshowing', RequireAuthentication, addMoviesToNowShowingController)
 
 // Now Showing Movie
 moviesRouter.post('/nowshowing/addmovie', RequireAuthentication, upload.single('image'), addNowShowingController)

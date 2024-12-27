@@ -26,12 +26,12 @@ class MoviesModel {
 
   static viewAllUpcomingMovies = async (page, limit, search) => {
     const offset = (page - 1) * limit;
-    let query = `SELECT * FROM upcoming_show`;
+    let query = `SELECT * FROM upcoming_show WHERE is_now_showing IS NULL`;
     const queryParams = [];
 
     // Add search condition if provided
     if (search) {
-      query += ` WHERE movie_name LIKE ?`;
+      query += ` AND movie_name LIKE ?`;
       queryParams.push(`%${search}%`);
     }
 
@@ -89,7 +89,7 @@ class MoviesModel {
   };
 
   static getCount = async (tableName, search) => {
-    let query = `SELECT COUNT(*) AS count FROM ${tableName}`; 
+    let query = `SELECT COUNT(*) AS count FROM ${tableName} WHERE is_now_showing IS NULL`;
     const queryParams = [];
 
     try {
@@ -99,14 +99,62 @@ class MoviesModel {
       }
 
       if (search) {
-        query += ` WHERE movie_name LIKE ?`;
+        query += ` AND movie_name LIKE ?`;
         queryParams.push(`%${search}%`);
-      } 
+      }
 
       const response = await db.query(query, queryParams);
       return response;
     } catch (error) {
       throw new Error(`Count Query failed, ${error}`);
+    }
+  };
+
+  static addMoviesToNowShowing = async (moviesIds) => {
+    try {
+      // Get all movie data from upcoming_show for the given IDs
+      const selectQuery = `SELECT * FROM upcoming_show WHERE id IN (?)`;
+      const [getMoviesResponse] = await db.query(selectQuery, [moviesIds]);
+
+      // console.log("getMoviesResponse:", getMoviesResponse);
+
+      if (getMoviesResponse && getMoviesResponse.length > 0) {
+        // Prepare data for bulk insert
+        const values = getMoviesResponse.map((data) => [
+          uuidv4(), // New unique ID for now_showing
+          data.id, // Movie ID from upcoming_show
+          data.movie_name, 
+          data.image, 
+          data.mtrcb_rating, 
+          data.genre, 
+          data.duration, 
+          data.created_at,
+        ]);
+
+        // console.log("Values for bulk insert:", values);
+        // Update is_now_showing from NULL to 1 (or any non-null value)
+        const updateQuery = `
+          UPDATE upcoming_show 
+          SET is_now_showing = 1 
+          WHERE id IN (?)
+        `;
+        await db.query(updateQuery, [moviesIds]);
+
+        // Perform bulk insert
+        const bulkInsertQuery = `
+          INSERT INTO now_showing 
+          (id, movie_id, movie_name, image, mtrcb_rating, genre, duration, created_at) 
+          VALUES ?
+        `;
+      
+        const [insertResponse] = await db.query(bulkInsertQuery, [values]);
+
+        return insertResponse;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(`Failed to move to now showing: ${error}`);
     }
   };
 }
