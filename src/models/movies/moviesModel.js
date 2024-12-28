@@ -25,7 +25,6 @@ class MoviesModel {
   };
 
   static viewAllUpcomingMovies = async (page, limit, search) => {
-    const offset = (page - 1) * limit;
     let query = `SELECT * FROM upcoming_show WHERE is_now_showing IS NULL`;
     const queryParams = [];
 
@@ -35,15 +34,19 @@ class MoviesModel {
       queryParams.push(`%${search}%`);
     }
 
-    query += ` LIMIT ? OFFSET ?`;
-    queryParams.push(limit, offset);
+    // Apply LIMIT and OFFSET only if limit is provided
+    if (limit) {
+      const offset = (page - 1) * limit;
+      query += ` LIMIT ? OFFSET ?`;
+      queryParams.push(limit, offset);
+    }
 
     try {
       const response = await db.query(query, queryParams);
       return response;
     } catch (error) {
       throw new Error(
-        "Failed to fetch upcoming movies. Please try again later." +
+        "Failed to fetch upcoming movies. Please try again later. " +
           error.message
       );
     }
@@ -123,11 +126,11 @@ class MoviesModel {
         const values = getMoviesResponse.map((data) => [
           uuidv4(), // New unique ID for now_showing
           data.id, // Movie ID from upcoming_show
-          data.movie_name, 
-          data.image, 
-          data.mtrcb_rating, 
-          data.genre, 
-          data.duration, 
+          data.movie_name,
+          data.image,
+          data.mtrcb_rating,
+          data.genre,
+          data.duration,
           data.created_at,
         ]);
 
@@ -146,7 +149,7 @@ class MoviesModel {
           (id, movie_id, movie_name, image, mtrcb_rating, genre, duration, created_at) 
           VALUES ?
         `;
-      
+
         const [insertResponse] = await db.query(bulkInsertQuery, [values]);
 
         return insertResponse;

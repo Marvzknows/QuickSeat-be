@@ -84,31 +84,47 @@ export const deleteNowShowingController = async (req, res) => {
 }
 
 export const getNowShowingController = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
-  // Convert page and limit to integers for use in the model function
+  const { page = 1, limit = 10, search = "" } = req.query;
+
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
 
   try {
-    const [data] = await NowShowingMoviesModel.getAllNowShowingMovies(pageNumber, limitNumber);
-    if (data) {
+    // Fetch paginated data
+    const [data] = await NowShowingMoviesModel.getAllNowShowingMovies(
+      pageNumber,
+      limitNumber
+    );
+    // Fetch total count
+    const [totalCountResult] = await NowShowingMoviesModel.getCount(
+      "now_showing",
+      search
+    );
+
+    const count = totalCountResult[0]?.count || 0;
+    const totalPages = Math.ceil(count / limitNumber);
+
+    if (data.length > 0) {
       return res.status(200).json({
         status: true,
-        data: data,
+        currentPage: pageNumber,
+        totalPages,
+        count,
+        data,
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       status: false,
-      message: "No data Found",
-      data: data,
+      message: "No data found.",
+      data: [],
     });
-    
   } catch (error) {
-    return res.status(401).json({
-      error: `Error fetching Now showing Movies, ${error}`,
+    return res.status(500).json({
+      message: `Error fetching Now Showing Movies: ${error.message}`,
     });
   }
-}
+};
+
 
 export const getNowShowingByIdController = async (req, res) => {
   const { id } = req.params;
