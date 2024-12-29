@@ -3,10 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 class MoviesModel {
   static addUpcomingMovies = async (payload) => {
-    const { movie_name, image, mtrcb_rating, genre, duration } = payload;
+    const { movie_name, image, mtrcb_rating, genre, duration, ticket_price } = payload;
     const movie_id = uuidv4();
-    const query = `INSERT INTO upcoming_show (id, movie_name, image, mtrcb_rating, genre, duration)
-                VALUES ( ?, ?, ? , ?, ?, ? )`;
+    const query = `INSERT INTO upcoming_show (id, movie_name, image, mtrcb_rating, genre, duration, ticket_price)
+                VALUES ( ?, ?, ? , ?, ?, ?, ? )`;
     try {
       // Add upload to cloudinary then sent its uploaded link to the database as the image for its name
       const response = await db.query(query, [
@@ -16,6 +16,7 @@ class MoviesModel {
         mtrcb_rating,
         genre,
         duration,
+        ticket_price
       ]);
 
       return response;
@@ -73,9 +74,9 @@ class MoviesModel {
   };
 
   static updateUpcomingMovie = async (payload) => {
-    const { id, movie_name, image, mtrcb_rating, genre, duration } = payload;
+    const { id, movie_name, image, mtrcb_rating, genre, duration, ticket_price } = payload;
     try {
-      const query = `UPDATE upcoming_show SET movie_name = ?, image = ?, mtrcb_rating = ?, genre = ?, duration = ? 
+      const query = `UPDATE upcoming_show SET movie_name = ?, image = ?, mtrcb_rating = ?, genre = ?, duration = ?, ticket_price = ? 
           WHERE id = ? `;
       const response = await db.query(query, [
         movie_name,
@@ -83,6 +84,7 @@ class MoviesModel {
         mtrcb_rating,
         genre,
         duration,
+        ticket_price,
         id,
       ]);
       return response;
