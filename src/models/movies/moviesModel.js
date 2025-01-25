@@ -134,6 +134,7 @@ class MoviesModel {
           data.genre,
           data.duration,
           data.created_at,
+          data.ticket_price,
         ]);
 
         // console.log("Values for bulk insert:", values);
@@ -148,7 +149,7 @@ class MoviesModel {
         // Perform bulk insert
         const bulkInsertQuery = `
           INSERT INTO now_showing 
-          (id, movie_id, movie_name, image, mtrcb_rating, genre, duration, created_at) 
+          (id, movie_id, movie_name, image, mtrcb_rating, genre, duration, created_at, ticket_price) 
           VALUES ?
         `;
 

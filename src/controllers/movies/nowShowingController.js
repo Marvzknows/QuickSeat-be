@@ -164,22 +164,33 @@ export const updateNowShowingController = async (req, res) => {
   const { file, body } = req;
   const { id, movie_name, mtrcb_rating, genre, duration } = body;
 
-  if (!file) return res.status(400).json({ message: "No Image uploaded." });
-
+  
   if (!id || !movie_name || !mtrcb_rating || !genre || !duration) {
     return res.status(400).json({ message: "Update Failed, Missing required fields in payload." });
   } 
-
+  
   try {
-    // Check if the file is too large (1MB limit)
-    if (file.size > 1 * 1024 * 1024) {
-      return res
-        .status(400)
-        .json({ message: "Image is too large. Maximum size is 1MB." });
-    }
+    let uploadedImageUrl;
 
-    const uploadedImageUrl = await imageUploadtoCloud(file, "now_showing");
-    console.log("Payload: ", body)
+    // If a file is uploaded, check size and upload to Cloudinary
+    if (file) {
+      if (file.size > 1 * 1024 * 1024) {
+        return res
+          .status(400)
+          .json({ message: "Image is too large. Maximum size is 1MB." });
+      }
+      uploadedImageUrl = await imageUploadtoCloud(file, "upcoming_show");
+    } else {
+      // No new file, retain the existing image by querying the current record
+      const [existingMovie] = await NowShowingMoviesModel.viewShowingMovieById(
+        id
+      );
+      if (!existingMovie) {
+        return res.status(404).json({ message: "Movie not found." });
+      }
+      uploadedImageUrl = existingMovie[0].image; // Use existing image
+    }
+    
     const response = await NowShowingMoviesModel.updateNowShowingMovie({
       ...body,
       image: uploadedImageUrl,
@@ -198,7 +209,6 @@ export const updateNowShowingController = async (req, res) => {
         message: "Updating Now showing movie failed",
       });
     }
-
   } catch (error) {
     return res.status(401).json({
       error: `Updating Now showing movie failed, ${error}`,

@@ -94,9 +94,9 @@ class NowShowingMoviesModel {
   };
 
   static updateNowShowingMovie = async (payload) => {
-    const { id, movie_name, image, mtrcb_rating, genre, duration } = payload;
+    const { id, movie_name, image, mtrcb_rating, genre, duration, price } = payload;
     try {
-      const query = `UPDATE now_showing SET movie_name = ?, image = ?, mtrcb_rating = ?, genre = ?, duration = ? 
+      const query = `UPDATE now_showing SET movie_name = ?, image = ?, mtrcb_rating = ?, genre = ?, duration = ?, ticket_price = ? 
         WHERE id = ? `;
       const response = await db.query(query, [
         movie_name,
@@ -104,12 +104,23 @@ class NowShowingMoviesModel {
         mtrcb_rating,
         genre,
         duration,
+        price,
         id,
       ]);
 
       return response;
     } catch (error) {
       throw new Error(`Update failed, ${error}`);
+    }
+  };
+
+  static viewShowingMovieById = async (movie_id) => {
+    try {
+      const query = `SELECT * FROM now_showing WHERE id = ?`;
+      const response = await db.query(query, [movie_id]);
+      return response;
+    } catch (error) {
+      throw new Error("Failed to fetch upcoming movie." + error.message);
     }
   };
 }
